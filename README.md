@@ -59,7 +59,7 @@ $ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http:
 |-i              | --initialQuestion | 1                                | Receive the first question to scrap                                                                              |
 |-f              | --finalQuestion   | 5444                             | Receive the last (included) question to scrap                                                                    |
 |-u              | --baseUrl         |http://www.bomcondutor.pt/questao/| Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site |
-|-i              | --inputFile       |                                  | Receive the input file to continue the JSON                                                                      |
+|-c              | --inputFile       |                                  | Receive the input file to continue the JSON                                                                      |
 |-o              | --outputFile      | ./questions.json                 | Receive the output file to store the JSON                                                                        |
 |-p              | --preQuestion     | ""                               | Receive the string to use before question number on the URL. Ex.: ".html"                                        |
 |-a              | --afterQuestion   | ""                               | Receive the string to use after question number on the URL                                                       |

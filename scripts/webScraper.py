@@ -21,10 +21,10 @@ def scriptParameters ():
 	afterQuestion = ""
 
 	try:
-		opts, _ = getopt(argv[1:], "hi:f:u:i:o:b:a:", ["help", "initialQuestion=", "finalQuestion=", "baseUrl=", "inputFile=", "outputFile=", "beforeQuestion=", "afterQuestion="])
+		opts, _ = getopt(argv[1:], "hi:f:u:c:o:b:a:", ["help", "initialQuestion=", "finalQuestion=", "baseUrl=", "inputFile=", "outputFile=", "beforeQuestion=", "afterQuestion="])
 	except GetoptError:
 		print("\nInvalid parameters. Read documentation or help.")
-		print("\n> webScraper -h\n")
+		print("\n> webScraper.py -h\n")
 		exit()
 
 	for opt, arg in opts:
@@ -38,7 +38,7 @@ def scriptParameters ():
 
 -u     --baseUrl             Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site.\tDefault - http://www.bomcondutor.pt/questao/
 
--i     --inputFile           Receive the input file to continue the JSON.\tDefault - ""
+-c     --inputFile           Receive the input file to continue the JSON.\tDefault - ""
 -o     --outputFile          Receive the output file to store the JSON.\tDefault - ./questions.json
 
 -b     --beforeQuestion      Receive the string to use before question number on the URL. Ex.: ".html".\tDefault - ""
@@ -62,7 +62,7 @@ Examples of commands:
 		elif opt in ("-u", "--baseUrl"):
 			baseUrl = arg
 		
-		elif opt in ("-i", "--inputFile"):
+		elif opt in ("-c", "--inputFile"):
 			inputFile = arg
 
 			try:
