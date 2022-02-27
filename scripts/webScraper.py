@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-from sys import argv
+from sys import argv, exit
+from getopt import getopt, GetoptError
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -8,48 +9,58 @@ from selenium.common.exceptions import NoSuchElementException
 
 import json
 
-# Script Parameters =====
+def scriptParameters ():
+	initialQuestionNum = 1
+	finalQuestionNum = 5444
+	baseUrl = "http://www.bomcondutor.pt/questao/"
 
-"""
-1. initialQuestionNum:
-		optional
-		number of the first IMTT Question to scrape
-		default "1"
+	try:
+		opts, args = getopt(argv[1:], "hi:f:u:", ["help", "initialQuestion=","finalQuestion=","baseUrl="])
+	except GetoptError:
+		print("\nInvalid parameters. Read documentation or help.")
+		print("\n> webScraper -h\n")
+		exit()
 
-2. finalQuestionNum
-		optional
-		number of the last (inclusive) IMTT Question to scrape
-		default "5444"
+	for opt, arg in opts:
+		if opt in ["-h", "--help"]:
+			print("""
 
-3. baseUrl
-		optional
-		base url for the scrape - need be a `bomcondutor.pt` page - used for offline version of the site
-		default "http://www.bomcondutor.pt/questao/"
-"""
+-h     --help                Show this menu
 
-initialQuestionNum = 1
-finalQuestionNum = 5444
-baseUrl = "http://www.bomcondutor.pt/questao/"
+-i     --initialQuestion     Receive the first question to scrap.\tDefault - 1
+-f     --finalQuestion       Receive the last (included) question to scrap.\tDefault - 5444
 
-if len(argv) == 1: pass
+-u     --baseUrl             Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site.\tDefault - http://www.bomcondutor.pt/questao/
 
-elif len(argv) == 2 and argv[1].isnumeric():
-	finalQuestionNum = int(argv[1])
 
-elif len(argv) == 3 and argv[1].isnumeric() and argv[2].isnumeric():
-	initialQuestionNum = int(argv[1])
-	finalQuestionNum = int(argv[2])
+Examples of commands:
 
-elif len(argv) >= 4 and argv[1].isnumeric() and argv[2].isnumeric():
-	initialQuestionNum = int(argv[1])
-	finalQuestionNum = int(argv[2])
-	baseUrl = argv[3]
+> webScraper.py -i 1 -f 5444 -u http://www.bomcondutor.pt/questao/
+> webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http://www.bomcondutor.pt/questao/
 
-else: print("\nInvalid parameters. Using default values.")
+			""")
+			exit()
+
+		elif opt in ("-i", "--initialQuestion") and arg.isnumeric():
+			initialQuestionNum = int(arg)
+
+		elif opt in ("-f", "--finalQuestion") and arg.isnumeric():
+			finalQuestionNum = int(arg)
+
+		elif opt in ("-u", "--baseUrl"):
+			baseUrl = arg
+		
+		else:
+			print("\nInvalid values. Read documentation or help.")
+			print("\n> webScraper -h\n")
+			exit()
+
+	return initialQuestionNum, finalQuestionNum, baseUrl
 
 # Variables Initialization =====
 
-letters = ["A", "B", "C", "D"]
+initialQuestionNum, finalQuestionNum, baseUrl = scriptParameters()
+optionLetters = ["A", "B", "C", "D"]
 possibleCategories = ["A", "AM", "B", "C", "D"]
 
 questions = []
@@ -88,7 +99,7 @@ for questionNumber in range(initialQuestionNum, finalQuestionNum + 1):
 
 			question["options"].append({
 				"index": index, # 0, 1, 2 or 3
-				"letter": letters[index], # A, B, C or D
+				"letter": optionLetters[index], # A, B, C or D
 				"text": answer.text,
 				"correct": isOptionCorrect
 			})

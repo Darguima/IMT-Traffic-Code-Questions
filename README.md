@@ -47,19 +47,18 @@ Python Script used to scrap all questions from the site `www.bomcondutor.pt`.
 #### Running 🚀
 
 ```console
-$ ./scripts/webScraper.py
-$ ./scripts/webScraper.py {?finalQuestionNum}
-$ ./scripts/webScraper.py {?initialQuestionNum} {?finalQuestionNum}
-$ ./scripts/webScraper.py {?initialQuestionNum} {?finalQuestionNum} {?baseUrl}
-
-$ ./scripts/webScraper.py 5 50 "http://www.bomcondutor.pt/questao/"
+$ scripts/webScraper.py
+$ scripts/webScraper.py -h
+$ scripts/webScraper.py -i 1 -f 5444 -u http://www.bomcondutor.pt/questao/
+$ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http://www.bomcondutor.pt/questao/
 ```
 
-1. __initialQuestionNum__ - optional - number of the first IMTT Question to scrape -> default "1"
-
-2. __finalQuestionNum__ - optional - number of the last (inclusive) IMTT Question to scrape -> default "5444"
-
-3. __baseUrl__ - optional -  base url for the scrape - need be a `bomcondutor.pt` page - used for offline version of the site -> default "http://www.bomcondutor.pt/questao/"
+| Short Argument | Long Argument     | Default                          | Description                                                                                                      |
+|----------------|-------------------|----------------------------------|------------------------------------------------------------------------------------------------------------------|
+|-h              | --help            |                                  | Show help menu                                                                                                   |
+|-i              | --initialQuestion | 1                                | Receive the first question to scrap                                                                              |
+|-f              | --finalQuestion   | 5444                             | Receive the last (included) question to scrap                                                                    |
+|-u              | --baseUrl         |http://www.bomcondutor.pt/questao/| Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site |
 
 ---
 
