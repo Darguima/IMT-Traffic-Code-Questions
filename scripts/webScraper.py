@@ -13,9 +13,12 @@ def scriptParameters ():
 	initialQuestionNum = 1
 	finalQuestionNum = 5444
 	baseUrl = "http://www.bomcondutor.pt/questao/"
+	outputFile = "questions.json"
+	beforeQuestion = ""
+	afterQuestion = ""
 
 	try:
-		opts, args = getopt(argv[1:], "hi:f:u:", ["help", "initialQuestion=","finalQuestion=","baseUrl="])
+		opts, _ = getopt(argv[1:], "hi:f:u:o:b:a:", ["help", "initialQuestion=", "finalQuestion=", "baseUrl=", "outputFile=", "beforeQuestion=", "afterQuestion="])
 	except GetoptError:
 		print("\nInvalid parameters. Read documentation or help.")
 		print("\n> webScraper -h\n")
@@ -32,11 +35,16 @@ def scriptParameters ():
 
 -u     --baseUrl             Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site.\tDefault - http://www.bomcondutor.pt/questao/
 
+-o     --outputFile          Receive the output file to store the JSON.\tDefault - ./questions.json
+
+-b     --beforeQuestion      Receive the string to use before question number on the URL. Ex.: ".html".\tDefault - ""
+-a     --afterQuestion       Receive the string to use after question number on the URL.\tDefault - ""
 
 Examples of commands:
 
-> webScraper.py -i 1 -f 5444 -u http://www.bomcondutor.pt/questao/
-> webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http://www.bomcondutor.pt/questao/
+> webScraper.py
+> webScraper.py -i 1 -f 5444 -u http://www.bomcondutor.pt/questao/ -a .html
+> webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http://www.bomcondutor.pt/questao/ --after .html
 
 			""")
 			exit()
@@ -50,16 +58,25 @@ Examples of commands:
 		elif opt in ("-u", "--baseUrl"):
 			baseUrl = arg
 		
+		elif opt in ("-o", "--outputFile"):
+			outputFile = arg
+
+		elif opt in ("-b", "--beforeQuestion"):
+			beforeQuestion = arg
+
+		elif opt in ("-a", "--afterQuestion"):
+			afterQuestion = arg
+		
 		else:
 			print("\nInvalid values. Read documentation or help.")
 			print("\n> webScraper -h\n")
 			exit()
 
-	return initialQuestionNum, finalQuestionNum, baseUrl
+	return initialQuestionNum, finalQuestionNum, baseUrl, outputFile, beforeQuestion, afterQuestion
 
 # Variables Initialization =====
 
-initialQuestionNum, finalQuestionNum, baseUrl = scriptParameters()
+initialQuestionNum, finalQuestionNum, baseUrl, outputFile, beforeQuestion, afterQuestion = scriptParameters()
 optionLetters = ["A", "B", "C", "D"]
 possibleCategories = ["A", "AM", "B", "C", "D"]
 
@@ -70,14 +87,17 @@ print("\n=============================================================")
 print("=====================  Starting scraper =====================")
 print("=============================================================")
 
-print(f"\nscraping question from {initialQuestionNum} to {finalQuestionNum} from \"{baseUrl}\".")
+print(f"\nScraping question from {initialQuestionNum} to {finalQuestionNum} from \"{baseUrl}\".")
+print(f"Storing JSON in `{outputFile}`")
+if (beforeQuestion != ""): print(f"Before: {beforeQuestion}")
+if (afterQuestion != ""): print(f"After: {afterQuestion}")
 print("\nQuestions:\n\n")
 
 driver = webdriver.Firefox()
 
 for questionNumber in range(initialQuestionNum, finalQuestionNum + 1):
 	try:
-		driver.get(baseUrl + str(questionNumber))
+		driver.get(baseUrl + beforeQuestion + str(questionNumber) + afterQuestion)
 
 		question = {
 			"questionNumber": questionNumber,
@@ -107,7 +127,7 @@ for questionNumber in range(initialQuestionNum, finalQuestionNum + 1):
 			if (isOptionCorrect):
 				question["correctOptionIndex"] = index
 
-		print(f"\n{questionNumber} - {question}")
+		print(f"\n{beforeQuestion}{questionNumber}{afterQuestion} - {question}")
 		questions.append(question)
 
 	except NoSuchElementException:
@@ -120,9 +140,9 @@ print("\n\n\nscrap ended!!\n")
 print("Ignored Questions:")
 print(ignoredQuestions)
 
-with open('questions.json', 'w') as outfile:
+with open(outputFile, 'w') as outfile:
     json.dump(questions, outfile)
 
-print("\nscraped data recorder in \"questions.json\" file.")
+print(f"\nscraped data recorder in `{outputFile}` file.")
 
 print("\n\nThanks for using me! Visit https://www.github.com/Darguima !!\n")
