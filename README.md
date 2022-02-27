@@ -31,6 +31,10 @@ All the __IMTT__ Traffic Code Questions are stored inside the `questions.json` w
 ]
 ```
 
+## Images 🖼️
+
+At this moment this repository cannot host all 5444 images. For now you can download a `zip` file with all of them from my [Google Drive](https://drive.google.com/file/d/1MTK28xy2wxA_jBakk_1hWoe2gkHoLlBh/view). In the future I want to filter, clean and compress all images to be available here on GitHub.
+
 ---
 
 ## Scripts ⚙️
