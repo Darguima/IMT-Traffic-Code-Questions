@@ -13,12 +13,15 @@ def scriptParameters ():
 	initialQuestionNum = 1
 	finalQuestionNum = 5444
 	baseUrl = "http://www.bomcondutor.pt/questao/"
+	inputFile = ""
+	questions = []
+	gottenQuestions = []
 	outputFile = "questions.json"
 	beforeQuestion = ""
 	afterQuestion = ""
 
 	try:
-		opts, _ = getopt(argv[1:], "hi:f:u:o:b:a:", ["help", "initialQuestion=", "finalQuestion=", "baseUrl=", "outputFile=", "beforeQuestion=", "afterQuestion="])
+		opts, _ = getopt(argv[1:], "hi:f:u:i:o:b:a:", ["help", "initialQuestion=", "finalQuestion=", "baseUrl=", "inputFile=", "outputFile=", "beforeQuestion=", "afterQuestion="])
 	except GetoptError:
 		print("\nInvalid parameters. Read documentation or help.")
 		print("\n> webScraper -h\n")
@@ -35,6 +38,7 @@ def scriptParameters ():
 
 -u     --baseUrl             Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site.\tDefault - http://www.bomcondutor.pt/questao/
 
+-i     --inputFile           Receive the input file to continue the JSON.\tDefault - ""
 -o     --outputFile          Receive the output file to store the JSON.\tDefault - ./questions.json
 
 -b     --beforeQuestion      Receive the string to use before question number on the URL. Ex.: ".html".\tDefault - ""
@@ -58,6 +62,28 @@ Examples of commands:
 		elif opt in ("-u", "--baseUrl"):
 			baseUrl = arg
 		
+		elif opt in ("-i", "--inputFile"):
+			inputFile = arg
+
+			try:
+				with open(inputFile, 'r') as inFile:
+					questions = json.load(inFile)
+
+				for question in questions:
+					gottenQuestions.append(question["questionNumber"])
+				gottenQuestions.sort()
+				
+
+			except FileNotFoundError:
+				print(f"\nFile `{inputFile}` not founded\n")
+				exit()
+			except json.decoder.JSONDecodeError:
+				print(f"\nFile `{inputFile}` not contain a JSON\n")
+				exit()
+			except:
+				print(f"\nSomething wrong happened (maybe JSON syntax) on `{inputFile}`\n")
+				exit()
+
 		elif opt in ("-o", "--outputFile"):
 			outputFile = arg
 
@@ -72,16 +98,16 @@ Examples of commands:
 			print("\n> webScraper -h\n")
 			exit()
 
-	return initialQuestionNum, finalQuestionNum, baseUrl, outputFile, beforeQuestion, afterQuestion
+	return initialQuestionNum, finalQuestionNum, baseUrl, inputFile, questions, gottenQuestions, outputFile, beforeQuestion, afterQuestion
 
 # Variables Initialization =====
 
-initialQuestionNum, finalQuestionNum, baseUrl, outputFile, beforeQuestion, afterQuestion = scriptParameters()
+initialQuestionNum, finalQuestionNum, baseUrl, inputFile, questions, gottenQuestions, outputFile, beforeQuestion, afterQuestion = scriptParameters()
 optionLetters = ["A", "B", "C", "D"]
 possibleCategories = ["A", "AM", "B", "C", "D"]
 
-questions = []
-ignoredQuestions = []
+errorQuestions = []
+skippedQuestions = []
 
 print("\n=============================================================")
 print("=====================  Starting scraper =====================")
@@ -89,6 +115,11 @@ print("=============================================================")
 
 print(f"\nScraping question from {initialQuestionNum} to {finalQuestionNum} from \"{baseUrl}\".")
 print(f"Storing JSON in `{outputFile}`")
+
+if (inputFile != ""):
+	print(f"\nContinuing the JSON in `{inputFile}` with questions number:")
+	print(gottenQuestions)
+
 if (beforeQuestion != ""): print(f"Before: {beforeQuestion}")
 if (afterQuestion != ""): print(f"After: {afterQuestion}")
 print("\nQuestions:\n\n")
@@ -96,6 +127,11 @@ print("\nQuestions:\n\n")
 driver = webdriver.Firefox()
 
 for questionNumber in range(initialQuestionNum, finalQuestionNum + 1):
+	if questionNumber in gottenQuestions:
+		print(f"\n{beforeQuestion}{questionNumber}{afterQuestion} - skipped")
+		skippedQuestions.append(questionNumber)
+		continue
+
 	try:
 		driver.get(baseUrl + beforeQuestion + str(questionNumber) + afterQuestion)
 
@@ -129,20 +165,31 @@ for questionNumber in range(initialQuestionNum, finalQuestionNum + 1):
 
 		print(f"\n{beforeQuestion}{questionNumber}{afterQuestion} - {question}")
 		questions.append(question)
+		gottenQuestions.append(questionNumber)
 
 	except NoSuchElementException:
-		ignoredQuestions.append(questionNumber)
+		errorQuestions.append(questionNumber)
 
 driver.close()
 
-print("\n\n\nscrap ended!!\n")
+print("\n\n\nscrap ended!!")
 
-print("Ignored Questions:")
-print(ignoredQuestions)
+errorQuestions.sort()
+skippedQuestions.sort()
+gottenQuestions.sort()
+
+print("\nError Questions:")
+print(errorQuestions)
+
+print("\nSkipped Questions:")
+print(skippedQuestions)
+
+print("\nGotten Questions:")
+print(gottenQuestions)
 
 with open(outputFile, 'w') as outfile:
-    json.dump(questions, outfile)
+  json.dump(questions, outfile)
 
 print(f"\nscraped data recorder in `{outputFile}` file.")
 
-print("\n\nThanks for using me! Visit https://www.github.com/Darguima !!\n")
+print("\n\nThanks for using me! Visit https://github.com/Darguima/IMTT-Traffic-Code-Questions !!\n")
