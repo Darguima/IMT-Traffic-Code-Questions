@@ -66,6 +66,26 @@ $ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http:
 
 ---
 
+### indenterJsonFile.py
+
+Python Script used to indent the questions stored on the file.
+
+#### Running 🚀
+
+```console
+$ indenterJsonFile.py
+$ indenterJsonFile.py -i questions.json -o questionsIndented.json -t 2
+$ indenterJsonFile.py --inputFile questions.json --outputFile questionsIndented.json --tabSize 2
+```
+
+| Short Argument | Long Argument     | Default                          | Description                                        |
+|----------------|-------------------|----------------------------------|----------------------------------------------------|
+|-i              | --inputFile       | ./questions.json                 | Receive the JSON input file to indent              |
+|-o              | --outputFile      | ./questionsIndented.json         | Receive the output file to store the indented JSON |
+|-t              | --tabSize         | 2                                | Receive the number of spaces on the tab            |
+
+---
+
 ## License 📝
 
 <img alt="License" src="https://img.shields.io/badge/license-MIT-%2304D361">
