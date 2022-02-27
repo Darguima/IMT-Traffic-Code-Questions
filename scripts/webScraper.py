@@ -126,49 +126,69 @@ print("\nQuestions:\n\n")
 
 driver = webdriver.Firefox()
 
-for questionNumber in range(initialQuestionNum, finalQuestionNum + 1):
-	if questionNumber in gottenQuestions:
-		print(f"\n{beforeQuestion}{questionNumber}{afterQuestion} - skipped")
-		skippedQuestions.append(questionNumber)
-		continue
+try:
+	for questionNumber in range(initialQuestionNum, finalQuestionNum + 1):
+		if questionNumber in gottenQuestions:
+			print(f"\n{beforeQuestion}{questionNumber}{afterQuestion} - skipped")
+			skippedQuestions.append(questionNumber)
+			continue
 
-	try:
-		driver.get(baseUrl + beforeQuestion + str(questionNumber) + afterQuestion)
+		try:
+			driver.get(baseUrl + beforeQuestion + str(questionNumber) + afterQuestion)
 
-		question = {
-			"questionNumber": questionNumber,
-			"category": "",
-			"text": "",
-			"options": [],
-			"correctOptionIndex": 0
-		}
+			question = {
+				"questionNumber": questionNumber,
+				"category": "",
+				"text": "",
+				"options": [],
+				"correctOptionIndex": 0
+			}
 
-		questionCategory = driver.find_element(by=By.CLASS_NAME, value="question-info").text.split(" ")[4:] # First char of text is always "A"
-		categories = filter(lambda char: char in possibleCategories, questionCategory)
-		question["category"] = list(categories)
+			questionCategory = driver.find_element(by=By.CLASS_NAME, value="question-info").text.split(" ")[4:] # First char of text is always "A"
+			categories = filter(lambda char: char in possibleCategories, questionCategory)
+			question["category"] = list(categories)
 
-		question["text"] = driver.find_element(by=By.CLASS_NAME, value="question-text").text
+			question["text"] = driver.find_element(by=By.CLASS_NAME, value="question-text").text
 
-		options = driver.find_elements(by=By.CLASS_NAME, value="answer-text") 
-		for index, answer in enumerate(options):
-			isOptionCorrect = answer.value_of_css_property("background-color") != "rgba(0, 0, 0, 0)" # When background is white the option is wrong
+			options = driver.find_elements(by=By.CLASS_NAME, value="answer-text") 
+			for index, answer in enumerate(options):
+				isOptionCorrect = answer.value_of_css_property("background-color") != "rgba(0, 0, 0, 0)" # When background is white the option is wrong
 
-			question["options"].append({
-				"index": index, # 0, 1, 2 or 3
-				"letter": optionLetters[index], # A, B, C or D
-				"text": answer.text,
-				"correct": isOptionCorrect
-			})
+				question["options"].append({
+					"index": index, # 0, 1, 2 or 3
+					"letter": optionLetters[index], # A, B, C or D
+					"text": answer.text,
+					"correct": isOptionCorrect
+				})
 
-			if (isOptionCorrect):
-				question["correctOptionIndex"] = index
+				if (isOptionCorrect):
+					question["correctOptionIndex"] = index
 
-		print(f"\n{beforeQuestion}{questionNumber}{afterQuestion} - {question}")
-		questions.append(question)
-		gottenQuestions.append(questionNumber)
+			print(f"\n{beforeQuestion}{questionNumber}{afterQuestion} - {question}")
+			questions.append(question)
+			gottenQuestions.append(questionNumber)
 
-	except NoSuchElementException:
-		errorQuestions.append(questionNumber)
+		except NoSuchElementException:
+			errorQuestions.append(questionNumber)
+
+except Exception as e:
+	print("\n\nERROR: Something happened")
+	print("=============================================")
+	print(e)
+	print("=============================================\n\n")
+
+	print("\n\n\n\n\n===========================================================")
+	print("We will try to store the questions on `webScrapper.bkp.json`")
+	print("===========================================================\n\n\n\n\n")
+
+	with open("webScrapper.bkp.json", 'w') as outfile:
+		json.dump(questions, outfile)
+	
+	print("===========================================================")
+	print("Questions saved on `webScrapper.bkp.json`")
+	print("===========================================================\n\n\n\n\n")
+	
+	exit()
 
 driver.close()
 
