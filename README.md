@@ -15,20 +15,18 @@ All the __IMTT__ Traffic Code Questions are stored inside the `questions.json` w
 ```javascript
 [
 	{
-		"questionNumber": integer, // IMTT Question Number
+		"questionNumber": integer,
 		"category": string[], // "A", "AM", "B", "C" or/and "D"
-		"text": string, //the question text
+		"theme": string,
+		"text": string,
 		"options": [
 			{
-				"index": integer, // 0, 1, 2 or 3
-				"letter": string, // A, B, C or D
 				"text": string,
 				"correct": boolean
 			}
 		],
-		"correctOptionIndex": // 0, 1, 2 or 3
+		"correctOptionIndex": integer // 0, 1, 2 or 3
 	}
-]
 ```
 
 ## Images 🖼️
@@ -53,8 +51,8 @@ Python Script used to scrap all questions from the site `www.bomcondutor.pt`.
 ```console
 $ scripts/webScraper.py
 $ scripts/webScraper.py -h
-$ scripts/webScraper.py -i 1 -f 5444 -u http://www.bomcondutor.pt/questao/
-$ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http://www.bomcondutor.pt/questao/
+$ scripts/webScraper.py -i 1 -f 5444 -u http://www.bomcondutor.pt/questao/ -t 2
+$ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http://www.bomcondutor.pt/questao/ --tabSize 2
 ```
 
 | Short Argument | Long Argument     | Default                          | Description                                                                                                      |
@@ -65,28 +63,9 @@ $ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http:
 |-u              | --baseUrl         |http://www.bomcondutor.pt/questao/| Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site |
 |-c              | --inputFile       |                                  | Receive the input file to continue the JSON                                                                      |
 |-o              | --outputFile      | ./questions.json                 | Receive the output file to store the JSON                                                                        |
+|-t              | --tabSize         | None                             | Receive the number of spaces on the tab of indentation                                                           |
 |-p              | --preQuestion     | ""                               | Receive the string to use before question number on the URL. Ex.: ".html"                                        |
 |-a              | --afterQuestion   | ""                               | Receive the string to use after question number on the URL                                                       |
-
----
-
-### indenterJsonFile.py
-
-Python Script used to indent the questions stored on the file.
-
-#### Running 🚀
-
-```console
-$ indenterJsonFile.py
-$ indenterJsonFile.py -i questions.json -o questionsIndented.json -t 2
-$ indenterJsonFile.py --inputFile questions.json --outputFile questionsIndented.json --tabSize 2
-```
-
-| Short Argument | Long Argument     | Default                          | Description                                        |
-|----------------|-------------------|----------------------------------|----------------------------------------------------|
-|-i              | --inputFile       | ./questions.json                 | Receive the JSON input file to indent              |
-|-o              | --outputFile      | ./questionsIndented.json         | Receive the output file to store the indented JSON |
-|-t              | --tabSize         | 2                                | Receive the number of spaces on the tab            |
 
 ---
 

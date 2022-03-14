@@ -17,11 +17,12 @@ def scriptParameters ():
 	questions = []
 	gottenQuestions = []
 	outputFile = "questions.json"
+	tabSize = None
 	beforeQuestion = ""
 	afterQuestion = ""
 
 	try:
-		opts, _ = getopt(argv[1:], "hi:f:u:c:o:b:a:", ["help", "initialQuestion=", "finalQuestion=", "baseUrl=", "inputFile=", "outputFile=", "beforeQuestion=", "afterQuestion="])
+		opts, _ = getopt(argv[1:], "hi:f:u:c:o:t:b:a:", ["help", "initialQuestion=", "finalQuestion=", "baseUrl=", "inputFile=", "outputFile=", "tabSize=", "beforeQuestion=", "afterQuestion="])
 	except GetoptError:
 		print("\nInvalid parameters. Read documentation or help.")
 		print("\n> webScraper.py -h\n")
@@ -40,6 +41,8 @@ def scriptParameters ():
 
 -c     --inputFile           Receive the input file to continue the JSON.\tDefault - ""
 -o     --outputFile          Receive the output file to store the JSON.\tDefault - ./questions.json
+
+-t     --tabSize             Receive the number of spaces on the tab.\tDefault - None
 
 -b     --beforeQuestion      Receive the string to use before question number on the URL. Ex.: ".html".\tDefault - ""
 -a     --afterQuestion       Receive the string to use after question number on the URL.\tDefault - ""
@@ -60,7 +63,7 @@ Examples of commands:
 			finalQuestionNum = int(arg)
 
 		elif opt in ("-u", "--baseUrl"):
-			baseUrl = arg
+			baseUrl = arg + ("/" if arg[-1] != "/" else "")
 		
 		elif opt in ("-c", "--inputFile"):
 			inputFile = arg
@@ -86,6 +89,9 @@ Examples of commands:
 
 		elif opt in ("-o", "--outputFile"):
 			outputFile = arg
+		
+		elif opt in ("-t", "--tabSize") and arg.isnumeric():
+			tabSize = int(arg)
 
 		elif opt in ("-b", "--beforeQuestion"):
 			beforeQuestion = arg
@@ -98,12 +104,12 @@ Examples of commands:
 			print("\n> webScraper -h\n")
 			exit()
 
-	return initialQuestionNum, finalQuestionNum, baseUrl, inputFile, questions, gottenQuestions, outputFile, beforeQuestion, afterQuestion
+	return initialQuestionNum, finalQuestionNum, baseUrl, inputFile, questions, gottenQuestions, outputFile, tabSize, beforeQuestion, afterQuestion
 
 # Variables Initialization =====
 
-initialQuestionNum, finalQuestionNum, baseUrl, inputFile, questions, gottenQuestions, outputFile, beforeQuestion, afterQuestion = scriptParameters()
-optionLetters = ["A", "B", "C", "D"]
+initialQuestionNum, finalQuestionNum, baseUrl, inputFile, questions, gottenQuestions, outputFile, tabSize, beforeQuestion, afterQuestion = scriptParameters()
+
 possibleCategories = ["A", "AM", "B", "C", "D"]
 
 errorQuestions = []
@@ -139,14 +145,19 @@ try:
 			question = {
 				"questionNumber": questionNumber,
 				"category": "",
+				"theme": "",
 				"text": "",
 				"options": [],
 				"correctOptionIndex": 0
 			}
 
-			questionCategory = driver.find_element(by=By.CLASS_NAME, value="question-info").text.split(" ")[4:] # First char of text is always "A"
-			categories = filter(lambda char: char in possibleCategories, questionCategory)
+			questionInfo = driver.find_element(by=By.CLASS_NAME, value="question-info").text
+			
+			categories = filter(lambda char: char in possibleCategories, questionInfo.split(" ")[2:]) # First char of text is always "A"
 			question["category"] = list(categories)
+
+			theme = questionInfo[questionInfo.find("tema ") + 5:questionInfo.rfind(",")]
+			question["theme"] = theme
 
 			question["text"] = driver.find_element(by=By.CLASS_NAME, value="question-text").text
 
@@ -155,8 +166,6 @@ try:
 				isOptionCorrect = answer.value_of_css_property("background-color") != "rgba(0, 0, 0, 0)" # When background is white the option is wrong
 
 				question["options"].append({
-					"index": index, # 0, 1, 2 or 3
-					"letter": optionLetters[index], # A, B, C or D
 					"text": answer.text,
 					"correct": isOptionCorrect
 				})
@@ -208,7 +217,7 @@ print("\nGotten Questions:")
 print(gottenQuestions)
 
 with open(outputFile, 'w') as outfile:
-  json.dump(questions, outfile)
+  json.dump(questions, outfile, indent=tabSize)
 
 print(f"\nscraped data recorder in `{outputFile}` file.")
 
