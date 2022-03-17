@@ -69,6 +69,30 @@ $ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http:
 
 ---
 
+### verifyJson ✔️
+
+Python Script used to verify if the JSON file is with correct syntax.
+
+#### Requirements
+
+#### Running 🚀
+
+```console
+$ scripts/verifyJson.py
+$ scripts/verifyJson.py -h
+$ scripts/verifyJson.py -j questions.json -i 1 -f 5444
+$ scripts/verifyJson.py --jsonFile questions.json --initialQuestion 1 --finalQuestion 5444
+```
+
+| Short Argument | Long Argument     | Default                          | Description                                               |
+|----------------|-------------------|----------------------------------|-----------------------------------------------------------|
+|-h              | --help            |                                  | Show help menu                                            |
+|-j              | --jsonFile        | questions.json                   | Receive the input file to verify the JSON                 |
+|-i              | --initialQuestion | 1                                | Receive the first question that need be on file           |
+|-f              | --finalQuestion   | 5444                             | Receive the last (included) question that need be on file |
+
+---
+
 ## License 📝
 
 <img alt="License" src="https://img.shields.io/badge/license-MIT-%2304D361">
