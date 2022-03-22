@@ -7,12 +7,17 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
+from requests import get
+from io import BytesIO
+from PIL.Image import open as openImg
+from imagehash import dhash
+
 import json
 
 def scriptParameters ():
 	initialQuestionNum = 1
 	finalQuestionNum = 5444
-	baseUrl = "http://www.bomcondutor.pt/questao/"
+	baseUrl = "https://www.bomcondutor.pt/questao/"
 	inputFile = ""
 	questions = []
 	gottenQuestions = []
@@ -37,7 +42,7 @@ def scriptParameters ():
 -i     --initialQuestion     Receive the first question to scrap.\tDefault - 1
 -f     --finalQuestion       Receive the last (included) question to scrap.\tDefault - 5444
 
--u     --baseUrl             Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site.\tDefault - http://www.bomcondutor.pt/questao/
+-u     --baseUrl             Receive the base url to use on scrap. Need starts with a valid protocol (http://, https://, file://).\tDefault - https://www.bomcondutor.pt/questao/
 
 -c     --inputFile           Receive the input file to continue the JSON.\tDefault - ""
 -o     --outputFile          Receive the output file to store the JSON.\tDefault - ./questions.json
@@ -63,7 +68,13 @@ Examples of commands:
 			finalQuestionNum = int(arg)
 
 		elif opt in ("-u", "--baseUrl"):
-			baseUrl = arg + ("/" if arg[-1] != "/" else "")
+			if arg.startswith("http://") or arg.startswith("https://") or arg.startswith("file://"): 
+				baseUrl = arg + ("/" if arg[-1] != "/" else "")
+			else:
+				print("\nInvalid url. Read documentation or help.")
+				print("Is needed a protocol - \"http\" or \"https\" or \"file://\"")
+				print("\n> webScraper -h\n")
+				exit()
 		
 		elif opt in ("-c", "--inputFile"):
 			inputFile = arg
@@ -147,6 +158,7 @@ try:
 				"category": "",
 				"theme": "",
 				"text": "",
+				"imageHash": "",
 				"options": [],
 				"correctOptionIndex": 0
 			}
@@ -160,6 +172,15 @@ try:
 			question["theme"] = theme
 
 			question["text"] = driver.find_element(by=By.CLASS_NAME, value="question-text").text
+
+			image = driver.find_elements(by=By.CLASS_NAME, value="question-image")[1].get_attribute("src").replace("file://", "")
+
+			if image.startswith("http"):
+				image = BytesIO(get(driver.find_elements(by=By.CLASS_NAME, value="question-image")[1].get_attribute("src")).content)
+			else:
+				image = image.replace("file://", "")
+
+			question["imageHash"] = dhash(openImg(image)).__str__()
 
 			options = driver.find_elements(by=By.CLASS_NAME, value="answer-text") 
 			for index, answer in enumerate(options):

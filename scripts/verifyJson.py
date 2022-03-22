@@ -163,6 +163,17 @@ for question in questions:
 		invalidQuestions.append(question['questionNumber'])
 		continue
 
+	#imageHash
+	if not "imageHash" in question:
+		print(f"Question num \"{question['questionNumber']}\" - Missing Question 'Image Hash'")
+		invalidQuestions.append(question['questionNumber'])
+		continue
+
+	elif not isinstance(question["imageHash"], str) and len(question["imageHash"]) != 16:
+		print(f"Question num \"{question['questionNumber']}\" - Question 'Image Hash' invalid")
+		invalidQuestions.append(question['questionNumber'])
+		continue
+
 	#options
 	if not "options" in question:
 		print(f"Question num \"{question['questionNumber']}\" - Missing 'Options'")

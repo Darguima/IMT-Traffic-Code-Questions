@@ -19,6 +19,7 @@ All the __IMTT__ Traffic Code Questions are stored inside the `questions.json` w
 		"category": string[], // "A", "AM", "B", "C" or/and "D"
 		"theme": string,
 		"text": string,
+		"imageHash": string, // difference hash of `www.bomcondutor.pt` questions images
 		"options": [
 			{
 				"text": string,
@@ -55,17 +56,17 @@ $ scripts/webScraper.py -i 1 -f 5444 -u http://www.bomcondutor.pt/questao/ -t 2
 $ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http://www.bomcondutor.pt/questao/ --tabSize 2
 ```
 
-| Short Argument | Long Argument     | Default                          | Description                                                                                                      |
-|----------------|-------------------|----------------------------------|------------------------------------------------------------------------------------------------------------------|
-|-h              | --help            |                                  | Show help menu                                                                                                   |
-|-i              | --initialQuestion | 1                                | Receive the first question to scrap                                                                              |
-|-f              | --finalQuestion   | 5444                             | Receive the last (included) question to scrap                                                                    |
-|-u              | --baseUrl         |http://www.bomcondutor.pt/questao/| Receive the base url to use on scrap. Need be a copy of `bomcondutor.pt`. Can be used offline copies of the site |
-|-c              | --inputFile       |                                  | Receive the input file to continue the JSON                                                                      |
-|-o              | --outputFile      | ./questions.json                 | Receive the output file to store the JSON                                                                        |
-|-t              | --tabSize         | None                             | Receive the number of spaces on the tab of indentation                                                           |
-|-p              | --preQuestion     | ""                               | Receive the string to use before question number on the URL. Ex.: ".html"                                        |
-|-a              | --afterQuestion   | ""                               | Receive the string to use after question number on the URL                                                       |
+| Short Argument | Long Argument     | Default                           | Description                                                                                          |
+|----------------|-------------------|-----------------------------------|------------------------------------------------------------------------------------------------------|
+|-h              | --help            |                                   | Show help menu                                                                                       |
+|-i              | --initialQuestion | 1                                 | Receive the first question to scrap                                                                  |
+|-f              | --finalQuestion   | 5444                              | Receive the last (included) question to scrap                                                        |
+|-u              | --baseUrl         |https://www.bomcondutor.pt/questao/| Receive the base url to use on scrap. Need starts with a valid protocol (http://, https://, file://) |
+|-c              | --inputFile       |                                   | Receive the input file to continue the JSON                                                          |
+|-o              | --outputFile      | ./questions.json                  | Receive the output file to store the JSON                                                            |
+|-t              | --tabSize         | None                              | Receive the number of spaces on the tab of indentation                                               |
+|-p              | --preQuestion     | ""                                | Receive the string to use before question number on the URL. Ex.: ".html"                            |
+|-a              | --afterQuestion   | ""                                | Receive the string to use after question number on the URL                                           |
 
 ---
 
