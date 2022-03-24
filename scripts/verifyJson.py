@@ -2,6 +2,7 @@
 
 from sys import argv, exit
 from getopt import getopt, GetoptError
+from os import listdir
 
 import json
 
@@ -11,9 +12,10 @@ def scriptParameters():
 	questions = []
 	initialQuestion = 1
 	finalQuestion = 5444
+	imagesValidsHashes = None
 
 	try:
-		opts, _ = getopt(argv[1:], "hj:i:f:", ["help", "jsonFile=", "initialQuestion=", "finalQuestion="])
+		opts, _ = getopt(argv[1:], "hj:i:f:d:", ["help", "jsonFile=", "initialQuestion=", "finalQuestion=", "imagesDir="])
 	except GetoptError:
 		print("\nInvalid parameters. Read documentation or help.")
 		print("\n> verifyJson.py -h\n")
@@ -30,11 +32,13 @@ def scriptParameters():
 -i     --initialQuestion     Receive the first question that need be on file.\tDefault - 1
 -f     --finalQuestion       Receive the last (included) question that need be on file.\tDefault - 5444
 
+-d     --imagesDir           Receive the questions images directory to verify the images hash.\tDefault - None
+
 Examples of commands:
 
 > verifyJson.py
-> verifyJson.py -j questions.json -i 1 -f 5444
-> verifyJson.py --jsonFile questions.json --initialQuestion 1 --finalQuestion 5444
+> verifyJson.py -j questions.json -i 1 -f 5444 -d imagesQuestions
+> verifyJson.py --jsonFile questions.json --initialQuestion 1 --finalQuestion 5444 --imagesDir imagesQuestions
 
 			""")
 			exit()
@@ -47,6 +51,11 @@ Examples of commands:
 
 		elif opt in ("-f", "--finalQuestion") and arg.isnumeric():
 			finalQuestion = int(arg)
+		
+		elif opt in ("-d", "--imagesDir"):
+			imagesValidsHashes = listdir(arg)
+			imagesValidsHashes = list(filter(lambda file: file.find(".") == 16, imagesValidsHashes))
+			imagesValidsHashes = list(map(lambda file: file[:16], imagesValidsHashes))
 		
 		else:
 			print("\nInvalid values. Read documentation or help.")
@@ -72,17 +81,21 @@ Examples of commands:
 	
 	questionsNumbers = list(range(initialQuestion, finalQuestion + 1))
 		
-	return inputFile, questions, initialQuestion, finalQuestion, questionsNumbers
+	return inputFile, questions, initialQuestion, finalQuestion, questionsNumbers, imagesValidsHashes
 
 # Variables Initialization =====
 
-inputFile, questions, initialQuestion, finalQuestion, questionsNumbers = scriptParameters()
+inputFile, questions, initialQuestion, finalQuestion, questionsNumbers, imagesValidsHashes = scriptParameters()
 
 print("\n==============================================================")
 print("===================  Starting verification ===================")
 print("==============================================================")
 
-print(f"\nVerifying question from {initialQuestion} to {finalQuestion} from \"{inputFile}\".\n")
+print(f"\nVerifying question from {initialQuestion} to {finalQuestion} from \"{inputFile}\".")
+if imagesValidsHashes:
+	print(f"Were founded {len(imagesValidsHashes)} images on the given directory.\n")
+else:
+	print("Were not specified image questions directory. Ignoring hash verification!\n")
 
 possibleCategories = ["A", "AM", "B", "C", "D"]
 
@@ -172,7 +185,10 @@ for question in questions:
 	elif not isinstance(question["imageHash"], str) and len(question["imageHash"]) != 16:
 		print(f"Question num \"{question['questionNumber']}\" - Question 'Image Hash' invalid")
 		invalidQuestions.append(question['questionNumber'])
-		continue
+	
+	elif imagesValidsHashes and question["imageHash"] not in imagesValidsHashes:
+		print(f"Question num \"{question['questionNumber']}\" - No Image File with this hash")
+		invalidQuestions.append(question['questionNumber'])
 
 	#options
 	if not "options" in question:
@@ -249,6 +265,7 @@ for question in questions:
 
 print("\n\nInvalid Questions:")
 print(invalidQuestions)
+print(f"Total: {len(invalidQuestions)}")
 
 questionsNumbers = list(
 	filter(lambda questionNumber: 

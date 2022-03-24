@@ -32,7 +32,7 @@ All the __IMTT__ Traffic Code Questions are stored inside the `questions.json` w
 
 ## Images 🖼️
 
-At this moment this repository cannot host all 5444 images. For now you can download a `zip` file with all of them from my [Google Drive](https://drive.google.com/file/d/1MTK28xy2wxA_jBakk_1hWoe2gkHoLlBh/view). In the future I want to filter, clean and compress all images to be available here on GitHub.
+If you want use the images questions along questions, you can use the `imageHash` on `questions.json`. This hash is also the name of the correct image file in the `questionsImages.zip` available at [Releases Page](https://github.com/Darguima/IMTT-Traffic-Code-Questions/releases/tag/v1.0.0).
 
 ---
 
@@ -76,21 +76,53 @@ Python Script used to verify if the JSON file is with correct syntax.
 
 #### Requirements
 
+1. Pillow - `pip install Pillow`
+2. ImageHash - `pip install ImageHash`
+
+#### Running 🚀
+
+```console
+$ scripts/imageFilter.py
+$ scripts/imageFilter.py -h
+$ scripts/imageFilter.py -i images -o questionsImages -f imageHashes.json
+```
+
+| Short Argument | Long Argument     | Default                          | Description                                                      |
+|----------------|-------------------|----------------------------------|------------------------------------------------------------------|
+|-h              | --help            |                                  | Show help menu                                                   |
+|-i              | --inputDirectory  | (Required)                       | Receive the input directory with images files                    |
+|-o              | --outputDirectory | (Required)                       | Receive the directory to store images files with hashes names    |
+|-f              | --outputFile      | ./images.json                    | Receive the output file to store the JSON                        |
+
+NOTE: All files in inputDirectory need be named like "{questionNumber}.jpg" or "{questionNumber}.png".
+
+---
+
+### imageFilter 🖼️
+
+Python Script used to rename questions images to their dhash (difference hash) by deleting repeated images.
+To access them you can use the `imageHash` in `questions.json`.
+
+#### Requirements
+
 #### Running 🚀
 
 ```console
 $ scripts/verifyJson.py
 $ scripts/verifyJson.py -h
-$ scripts/verifyJson.py -j questions.json -i 1 -f 5444
-$ scripts/verifyJson.py --jsonFile questions.json --initialQuestion 1 --finalQuestion 5444
+$ scripts/verifyJson.py -j questions.json -i 1 -f 5444 -d imagesQuestions
+$ scripts/verifyJson.py --jsonFile questions.json --initialQuestion 1 --finalQuestion 5444 --imagesDir imagesQuestions
 ```
 
-| Short Argument | Long Argument     | Default                          | Description                                               |
-|----------------|-------------------|----------------------------------|-----------------------------------------------------------|
-|-h              | --help            |                                  | Show help menu                                            |
-|-j              | --jsonFile        | questions.json                   | Receive the input file to verify the JSON                 |
-|-i              | --initialQuestion | 1                                | Receive the first question that need be on file           |
-|-f              | --finalQuestion   | 5444                             | Receive the last (included) question that need be on file |
+| Short Argument | Long Argument     | Default                          | Description                                                      |
+|----------------|-------------------|----------------------------------|------------------------------------------------------------------|
+|-h              | --help            |                                  | Show help menu                                                   |
+|-j              | --jsonFile        | questions.json                   | Receive the input file to verify the JSON                        |
+|-i              | --initialQuestion | 1                                | Receive the first question that need be on file                  |
+|-f              | --finalQuestion   | 5444                             | Receive the last (included) question that need be on file        |
+|-d              | --imagesDir       | None                             | Receive the questions images directory to verify the images hash |
+
+###### NOTE: All files in inputDirectory need be named like `{questionNumber}.jpg` or `{questionNumber}.png`.
 
 ---
 
