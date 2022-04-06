@@ -33,9 +33,9 @@ def questions_scrape (baseUrl):
 			print(f"\tCat {category} - Question {quest_number:0>4}", end="\r")
 		
 	print("\n\nQuestions Scraped:")
-	print(f"\tCategory A - {len(questions['A']):0>4} (of 0593) questions")
-	print(f"\tCategory B - {len(questions['B']):0>4} (of 3910) questions")
-	print(f"\tCategory C - {len(questions['C']):0>4} (of 0307) questions")
-	print(f"\tCategory D - {len(questions['D']):0>4} (of 0350) questions")
+	print(f"\tCategory A - {len(questions['A']):0>4} questions (of 0593 estimated)")
+	print(f"\tCategory B - {len(questions['B']):0>4} questions (of 3910 estimated)")
+	print(f"\tCategory C - {len(questions['C']):0>4} questions (of 0307 estimated)")
+	print(f"\tCategory D - {len(questions['D']):0>4} questions (of 0350 estimated)")
 
 	return questions

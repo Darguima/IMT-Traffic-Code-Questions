@@ -5,7 +5,7 @@ from requests import get
 
 def questions_downloader (outputDir = "./questionsOffline", downloadAgain = False):
 	print("\n========================================================")
-	print("=================  Starting downloader =================")
+	print("============  Starting questions downloader ============")
 	print("========================================================")
 
 	print(f"\nDownloading html files to \"{outputDir}\".")
