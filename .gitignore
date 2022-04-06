@@ -1,2 +1,3 @@
-geckodriver.log
-webScrapper.bkp.json
+questionsOffline
+questionsImages
+**/__pycache__
