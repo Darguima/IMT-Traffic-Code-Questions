@@ -10,8 +10,14 @@ def questions_downloader (outputDir = "./questionsOffline", downloadAgain = Fals
 
 	print(f"\nDownloading html files to \"{outputDir}\".")
 
-	if not downloadAgain: print("Ignoring already downloaded files!")
+	if not downloadAgain: print("Not downloading already downloaded files!")
 	else: print("Downloading again already downloaded files!")
+
+	print("\nEstimated Amount of Questions:")
+	print("\tCat A - 593")
+	print("\tCat B - 3910")
+	print("\tCat C - 307")
+	print("\tCat D - 350")
 
 	if not exists(outputDir): mkdir(outputDir)
 

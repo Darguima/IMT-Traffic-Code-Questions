@@ -11,16 +11,10 @@ def images_downloader (questions, outputDir = "./questionsOffline", downloadAgai
 
 	print(f"\nDownloading image files to \"{outputDir}\".")
 
-	if not downloadAgain: print("Ignoring already downloaded files!")
+	if not downloadAgain: print("Not downloading already downloaded files!")
 	else: print("Downloading again already downloaded files!")
 
 	if not exists(outputDir): mkdir(outputDir)
-
-	print("\nEstimated Amount of Images:")
-	print("\tCat A - 592")
-	print("\tCat B - 3909")
-	print("\tCat C - 306")
-	print("\tCat D - 346")
 
 	for category in questions:
 		print(f"\n\nStarting category \"{category}\".")
@@ -30,7 +24,7 @@ def images_downloader (questions, outputDir = "./questionsOffline", downloadAgai
 
 		for question in questions[category]:
 			if not downloadAgain and exists(f"{outputDir}/imgs{category}/{question['imageId']}.jpg"):
-				print(f"\t{question['questionNumber']:0>4} with skipped files", end="\r")
+				print(f"\t{question['questionNumber']:0>4}", end="\r")
 				continue
 
 			file = get(f"https://testes-codigo.pt/bd/imgs{category}/{question['imageId']}.jpg", stream=True, allow_redirects=False)
@@ -43,13 +37,13 @@ def images_downloader (questions, outputDir = "./questionsOffline", downloadAgai
 				if img.size == (300, 199) or img.size == (300, 200):
 					draw.rectangle(((14, 164), (56, 187)), fill="black")
 				
-				elif img.size == (409, 272):
-					draw.rectangle(((14, 224), (89, 258)), fill="black")
+				elif img.size == (408, 271) or img.size == (409, 272):
+					draw.rectangle(((13, 223), (90, 259)), fill="black")
 				
 				elif img.size == (450, 299) or img.size == (451, 300):
 					draw.rectangle(((14, 247), (98, 288)), fill="black")
 
-				elif img.size == (556, 368) or img.size == (556, 369) or img.size == (556, 372):
+				elif img.size == (556, 368) or img.size == (555, 369) or img.size == (556, 369) or img.size == (556, 372):
 					draw.rectangle(((14, 310), (117, 358)), fill="black")
 
 				else:
@@ -61,3 +55,5 @@ def images_downloader (questions, outputDir = "./questionsOffline", downloadAgai
 			else:
 				print(f"\n\nERROR - question {question['questionNumber']} has invalid image ID!\n")
 				continue
+	
+	print()
