@@ -6,6 +6,7 @@ from modules.store_json import store_json
 from modules.images_downloader import images_downloader
 from modules.pdf_downloader import pdf_downloader
 from modules.pdf_images_scraper import pdf_images_scraper
+from modules.images_filter import images_filter
 
 
 download_mode = True
@@ -39,6 +40,8 @@ if download_mode: images_downloader(questions, download_directory, download_agai
 pdf_downloader(download_directory, download_again)
 
 scraped_images = pdf_images_scraper(download_directory, images_output_dir)
+
+questions = images_filter(questions, scraped_images, base_url)
 
 store_json(questions, output_file)
 
