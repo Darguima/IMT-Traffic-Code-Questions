@@ -37,7 +37,7 @@ questions = questions_scrape(base_url)
 
 if download_mode: images_downloader(questions, download_directory, download_again)
 
-pdf_downloader(download_directory, download_again)
+if download_mode: pdf_downloader(download_directory, download_again)
 
 scraped_images = pdf_images_scraper(download_directory, images_output_dir)
 
