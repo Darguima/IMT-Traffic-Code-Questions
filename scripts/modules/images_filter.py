@@ -3,7 +3,7 @@ from os.path import exists
 
 from requests import get
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from imagehash import dhash, hex_to_hash
 
@@ -44,6 +44,23 @@ def images_filter (questions, scraped_images, base_url, images_output_dir):
 			else:
 				response = get(f'{base_url.replace("questao", "bd")}/imgs{category}/{image_id}.jpg')
 				img = Image.open(BytesIO(response.content))
+
+				draw = ImageDraw.Draw(img)
+				
+				if img.size == (300, 199) or img.size == (300, 200):
+					draw.rectangle(((14, 164), (56, 187)), fill="black")
+				
+				elif img.size == (408, 271) or img.size == (409, 272):
+					draw.rectangle(((13, 223), (90, 259)), fill="black")
+				
+				elif img.size == (450, 299) or img.size == (451, 300):
+					draw.rectangle(((14, 247), (98, 288)), fill="black")
+
+				elif img.size == (556, 368) or img.size == (555, 369) or img.size == (556, 369) or img.size == (556, 372):
+					draw.rectangle(((14, 310), (117, 358)), fill="black")
+
+				else:
+						print(f"Resolution not founded in {question['imageId']} - {img.size}")
 			
 			online_image_hash = dhash(img)
 
