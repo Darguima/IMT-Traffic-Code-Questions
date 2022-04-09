@@ -1,8 +1,8 @@
-# IMTT Traffic Code Questions 🚗
+# IMT Traffic Code Questions 🚗
 
-🇬🇧 This repository contains the JSON of all __IMTT__ Traffic Code Questions.
+🇬🇧 This repository contains the JSON of all __IMT__ Traffic Code Questions.
 
-🇵🇹 Este repositório contém um JSON de todas as questões de código do __IMTT__.
+🇵🇹 Este repositório contém um JSON de todas as questões de código do __IMT__.
 
 ###### `Instituto da Mobilidade e dos Transportes` (`Institute of Mobility and Transport`) is the Portuguese institute that regulates public roads and their laws. These are the traffic code questions created and published by them.
 
@@ -10,119 +10,86 @@
 
 ## Questions
 
-All the __IMTT__ Traffic Code Questions are stored inside the `questions.json` with the following structure:
+All the __IMT__ Traffic Code Questions are stored inside the `questions.json`, organized by categories:
 
 ```javascript
-[
-	{
-		"questionNumber": integer,
-		"category": string[], // "A", "AM", "B", "C" or/and "D"
-		"theme": string,
-		"text": string,
-		"imageHash": string, // difference hash of `www.bomcondutor.pt` questions images
-		"options": [
-			{
-				"text": string,
-				"correct": boolean
-			}
-		],
-		"correctOptionIndex": integer // 0, 1, 2 or 3
-	}
+{
+	"A": question[],
+	"B": question[],
+	"C": question[],
+	"D": question[]
+}
+```
+
+Question Structure:
+```
+{
+	"questionNumber": integer,
+	"category": string, // "A", "B", "C" or "D"
+	"questionText": string,
+	"options": string[],
+	"correctOptionIndex": integer, // 0, 1 or 2
+	"imageHash": string, // name of the image file; ex.: `22808ee4a531585a.jpg`
+}
 ```
 
 ## Images 🖼️
 
-If you want use the images questions along questions, you can use the `imageHash` on `questions.json`. This hash is also the name of the correct image file in the `questionsImages.zip` available at [Releases Page](https://github.com/Darguima/IMTT-Traffic-Code-Questions/releases/tag/v1.0.0).
+If you want use the images questions along questions, you can use the `imageHash` on `questions.json`. This hash is also the name of the correct image file in the `questionsImages.zip` available at [Releases Page](https://github.com/Darguima/IMT-Traffic-Code-Questions/releases/tag/v2.0.0).
+
+Most of the images were scraped from the official IMT PDFs, using as reference the images from [`www.testes-codigo.pt`](https://testes-codigo.pt/). But sometimes the image was too low resolution and it was impossible for the Python Script to recognize the correct image, so in these cases we scraped the image again from [`www.testes-codigo.pt`](https://testes-codigo.pt/) and used a black watermark.
 
 ---
 
 ## Scripts ⚙️
 
-### webScraper
+All the questions were scraped using a Python Script.
 
-Python Script used to scrap all questions from the site `www.bomcondutor.pt`.
+#### Steps:
 
-#### Requirements
+1. Download the questions html files. (Optional, for development purposes)
 
-1. selenium - `pip install selenium`
-2. geckodriver - on Arch `yay -S geckodriver`
+2. Scrape questions from the html files (offline or online).
 
-#### Running 🚀
+3. Download the questions images files. (Optional, for development purposes)
 
-```console
-$ scripts/webScraper.py
-$ scripts/webScraper.py -h
-$ scripts/webScraper.py -i 1 -f 5444 -u http://www.bomcondutor.pt/questao/ -t 2
-$ scripts/webScraper.py --initialQuestion 1 --finalQuestion 5444 --baseUrl http://www.bomcondutor.pt/questao/ --tabSize 2
-```
+4. Download the questions PDFs files. (Optional, for development purposes)
 
-| Short Argument | Long Argument     | Default                           | Description                                                                                          |
-|----------------|-------------------|-----------------------------------|------------------------------------------------------------------------------------------------------|
-|-h              | --help            |                                   | Show help menu                                                                                       |
-|-i              | --initialQuestion | 1                                 | Receive the first question to scrap                                                                  |
-|-f              | --finalQuestion   | 5444                              | Receive the last (included) question to scrap                                                        |
-|-u              | --baseUrl         |https://www.bomcondutor.pt/questao/| Receive the base url to use on scrap. Need starts with a valid protocol (http://, https://, file://) |
-|-c              | --inputFile       |                                   | Receive the input file to continue the JSON                                                          |
-|-o              | --outputFile      | ./questions.json                  | Receive the output file to store the JSON                                                            |
-|-t              | --tabSize         | None                              | Receive the number of spaces on the tab of indentation                                               |
-|-p              | --preQuestion     | ""                                | Receive the string to use before question number on the URL. Ex.: ".html"                            |
-|-a              | --afterQuestion   | ""                                | Receive the string to use after question number on the URL                                           |
+5. Scrape images from the PDF files (offline or online).
 
----
+6. Compare the images difference hashes from PDF and reference website.
 
-### verifyJson ✔️
-
-Python Script used to verify if the JSON file is with correct syntax.
+7. Store the questions object in a JSON file.
 
 #### Requirements
 
 1. Pillow - `pip install Pillow`
-2. ImageHash - `pip install ImageHash`
+2. PyMuPDF - `pip install pymupdf`
+3. ImageHash - `pip install ImageHash`
+
+#### Some Configurations
+
+The script can have some configuration, for that open `scripts/index.py` and change the variables:
+
+```python
+download_mode = True  # Set to True if you want the script downloads and use downloaded questions/images/PDFs files (development purposes)
+
+download_directory = "./questionsOffline" # Were all the downloaded files are stored
+
+download_again = False # Set to True if you want that the script ignore already downloaded files and download them again
+
+output_file = "./questions.json" # The JSON file were questions are stored
+
+images_output_dir = "./questionsImages" # Where the questions images files are stored
+
+```
 
 #### Running 🚀
 
 ```console
-$ scripts/imageFilter.py
-$ scripts/imageFilter.py -h
-$ scripts/imageFilter.py -i images -o questionsImages -f imageHashes.json
+$ scripts/index.py
 ```
 
-| Short Argument | Long Argument     | Default                          | Description                                                      |
-|----------------|-------------------|----------------------------------|------------------------------------------------------------------|
-|-h              | --help            |                                  | Show help menu                                                   |
-|-i              | --inputDirectory  | (Required)                       | Receive the input directory with images files                    |
-|-o              | --outputDirectory | (Required)                       | Receive the directory to store images files with hashes names    |
-|-f              | --outputFile      | ./images.json                    | Receive the output file to store the JSON                        |
-
-NOTE: All files in inputDirectory need be named like "{questionNumber}.jpg" or "{questionNumber}.png".
-
----
-
-### imageFilter 🖼️
-
-Python Script used to rename questions images to their dhash (difference hash) by deleting repeated images.
-To access them you can use the `imageHash` in `questions.json`.
-
-#### Requirements
-
-#### Running 🚀
-
-```console
-$ scripts/verifyJson.py
-$ scripts/verifyJson.py -h
-$ scripts/verifyJson.py -j questions.json -i 1 -f 5444 -d imagesQuestions
-$ scripts/verifyJson.py --jsonFile questions.json --initialQuestion 1 --finalQuestion 5444 --imagesDir imagesQuestions
-```
-
-| Short Argument | Long Argument     | Default                          | Description                                                      |
-|----------------|-------------------|----------------------------------|------------------------------------------------------------------|
-|-h              | --help            |                                  | Show help menu                                                   |
-|-j              | --jsonFile        | questions.json                   | Receive the input file to verify the JSON                        |
-|-i              | --initialQuestion | 1                                | Receive the first question that need be on file                  |
-|-f              | --finalQuestion   | 5444                             | Receive the last (included) question that need be on file        |
-|-d              | --imagesDir       | None                             | Receive the questions images directory to verify the images hash |
-
-###### NOTE: All files in inputDirectory need be named like `{questionNumber}.jpg` or `{questionNumber}.png`.
 
 ---
 
@@ -136,8 +103,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Thanks 🙏
 
-All this questions were scraped from [`www.bomcondutor.pt`](https://www.bomcondutor.pt). They do a awesome job on this area and everyone who wants to learn should visit them.
+All this questions were scraped from [`www.testes-codigo.pt`](https://testes-codigo.pt/). They do a awesome job on this area and everyone who wants to learn should visit them.
 
-All IMTT question are [public](https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/PerguntasExames/Paginas/PerguntasExamesAtualizacao.aspx) and published by the institute itself.
+All IMT question are [public](https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/PerguntasExames/Paginas/PerguntasExamesAtualizacao.aspx) and published by the institute itself.
 
 ---
