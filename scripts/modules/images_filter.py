@@ -1,3 +1,4 @@
+from os import remove
 from os.path import exists
 
 from requests import get
@@ -7,7 +8,7 @@ from PIL import Image
 from imagehash import dhash, hex_to_hash
 
 
-def images_filter (questions, scraped_images, base_url):
+def images_filter (questions, scraped_images, base_url, images_output_dir):
 	print("\n========================================================")
 	print("====================  Images Filter ====================")
 	print("========================================================")
@@ -17,6 +18,7 @@ def images_filter (questions, scraped_images, base_url):
 	scraped_images = list(map(lambda hash: hex_to_hash(hash), scraped_images))
 
 	images_hashes = {"A": {}, "B": {}, "C": {}, "D": {}}
+	necessary_images = []
 
 	for category in questions:
 		for question in questions[category]:
@@ -53,6 +55,15 @@ def images_filter (questions, scraped_images, base_url):
 		for question in questions[category]:
 			question["imageHash"] = images_hashes[category][question["imageId"]]["hash"]
 			question["error"] = images_hashes[category][question["imageId"]]["error"]
+
+			if question["imageHash"] not in necessary_images:
+				necessary_images.append(question["imageHash"])
+	
+	print("\nCleaning unnecessary images!")
+
+	for image_hash in scraped_images:
+		if str(image_hash) not in necessary_images:
+			remove(f"{images_output_dir}/{str(image_hash)}.jpg")
 	
 	return questions
 		

@@ -41,7 +41,7 @@ if download_mode: pdf_downloader(download_directory, download_again)
 
 scraped_images = pdf_images_scraper(download_directory, images_output_dir)
 
-questions = images_filter(questions, scraped_images, base_url)
+questions = images_filter(questions, scraped_images, base_url, images_output_dir)
 
 store_json(questions, output_file)
 

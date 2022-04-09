@@ -41,7 +41,6 @@ def pdf_images_scraper (download_directory, images_output_dir):
         # extract the image bytes
         base_image = pdf_file.extract_image(xref)
         image_bytes = base_image["image"]
-        image_ext = base_image["ext"]
 
         img = Image.open(BytesIO(image_bytes))
         draw = ImageDraw.Draw(img)
@@ -65,10 +64,8 @@ def pdf_images_scraper (download_directory, images_output_dir):
             print(f"Resolution not founded in {page_index},{image_index} - {img.size}")
         
         img_hash = str(dhash(img))
-        
-        with open(f"{images_output_dir}/{img_hash}.{image_ext}", "wb") as img_file:
-          img_file.write(image_bytes)
-          img_file.close()
+
+        Image.open(BytesIO(image_bytes)).save(f"{images_output_dir}/{img_hash}.jpg", "JPEG")
         
         if img_hash not in scraped_images:
           scraped_images.append(img_hash)
